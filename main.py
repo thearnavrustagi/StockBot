@@ -34,10 +34,9 @@ def train_one_epoch(model, loss_fn, optim, dl):
         running_loss.append(last_loss)
     return np.mean(running_loss)
 
-def infer(test_dl, vrange):
+def infer(model,test_dl, vrange):
     (_max, _min) = vrange
     print(vrange)
-    model = torch.load(f"./models/{argv[1]}.pt")
     for X,y in test_dl:
         X,y = X.float(), y.detach().numpy()
         y_pred = model(X)
@@ -67,9 +66,10 @@ def main():
         loss_fn = nn.MSELoss(reduction="mean")
         train(model, loss_fn, train_dataloader)
         torch.save(model, SAVE_PATH)
-        infer(test_dataloader,vrange)
+        infer(model,test_dataloader,vrange)
     else:
-        infer(test_dataloader, vrange)
+        model = torch.load(f"./models/{argv[1]}.pt")
+        infer(model,test_dataloader, vrange)
  
 if __name__ == "__main__":
     main()   

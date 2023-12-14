@@ -28,6 +28,7 @@ class StockDataset(Dataset):
         self.transformed_data = scaler.fit_transform(self.stock_data.values.reshape(-1, 1))
         self.transformed_data = np.squeeze(self.transformed_data)
         self.range = (scaler.data_max_, scaler.data_min_)
+        self.transformed_data = self.transformed_data[100:1000]
         print(self.transformed_data.shape)
         print(self.range)
 

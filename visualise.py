@@ -5,7 +5,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 from hyperparameters import PAST_HISTORY
-from dataset import StockDataset
+from vis_dataset import StockDataset
 
 MODEL_PATH = "./models/hdfc.pt"
 DSET_PATH = "./datasets/hdfc.csv"
@@ -27,8 +27,6 @@ def sim_dataset(dset):
         yield scaledn(np.array(arr))
 
 if __name__ == "__main__":
-    dataset = pd.read_csv(DSET_PATH)[['Close']].tail(1000).to_numpy()
-
     values = []
     real = []
 
