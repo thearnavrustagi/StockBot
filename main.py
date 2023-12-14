@@ -7,7 +7,7 @@ from torch.utils.data import DataLoader, random_split
 
 from sys import argv
 from math import ceil, floor, sqrt
-from stockbot_attn import StockBot
+from stockbot import StockBot
 from dataset import StockDataset
 from hyperparameters import N_EPOCHS,LR, BATCH_SIZE, SAVE_PATH
 
@@ -36,6 +36,7 @@ def train_one_epoch(model, loss_fn, optim, dl):
 
 def infer(test_dl, vrange):
     (_max, _min) = vrange
+    print(vrange)
     model = torch.load(f"./models/{argv[1]}.pt")
     for X,y in test_dl:
         X,y = X.float(), y.detach().numpy()
@@ -45,8 +46,8 @@ def infer(test_dl, vrange):
         y = y * (_max - _min) + _min
 
         print(y_pred.shape, y.shape)
-        print(X.detach().numpy()[0] * (_max - _min) + _min)
         print("y",y[0],"y_pred", y_pred[0])
+        print("MSE: ", np.mean((y_pred-y)**2))
         
 
 def main():
@@ -57,15 +58,16 @@ def main():
     train_set, test_set = random_split(dataset, [ceil(l*0.9), floor(l*0.1)])
     vrange = dataset.range
 
-    def mdl (x):
-        return DataLoader(x, batch_size=BATCH_SIZE, shuffle=True)
-    train_dataloader, test_dataloader = mdl(train_set), mdl(test_set)
+    def mdl (x,bs=BATCH_SIZE):
+        return DataLoader(x, batch_size=bs, shuffle=True)
+    train_dataloader, test_dataloader = mdl(train_set), mdl(test_set,1000)
 
     if len(argv) == 1:
-        #model = torch.load(SAVE_PATH)
+        #model = torch.load("./models/hdfc.pt")
         loss_fn = nn.MSELoss(reduction="mean")
         train(model, loss_fn, train_dataloader)
         torch.save(model, SAVE_PATH)
+        infer(test_dataloader,vrange)
     else:
         infer(test_dataloader, vrange)
  

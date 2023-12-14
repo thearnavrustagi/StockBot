@@ -10,7 +10,7 @@ from hyperparameters import *
 class StockDataset(Dataset):
     def __init__(
         self,
-        stock_file: str = "dataset/adani.csv",
+        stock_file: str = "datasets/adani.csv",
         past_history: int = PAST_HISTORY,
         forward_look: int = FORWARD_LOOK,
         transform=None,
@@ -23,12 +23,13 @@ class StockDataset(Dataset):
 
         self.stock_data = pd.read_csv(stock_file)
         self.stock_data = self.stock_data[["Close"]]
-        self.stock_data = self.stock_data.tail(1000)
 
         scaler = MinMaxScaler(feature_range=(-1, 1))
         self.transformed_data = scaler.fit_transform(self.stock_data.values.reshape(-1, 1))
-        self.transformed_data = np.squeeze(np.array(self.transformed_data))
+        self.transformed_data = np.squeeze(self.transformed_data)
+        print(self.transformed_data.shape)
         self.range = (scaler.data_max_, scaler.data_min_)
+        print(self.range)
 
     def __len__(self):
         return len(self.transformed_data) - 2*self.past_history
@@ -45,7 +46,5 @@ class StockDataset(Dataset):
 
 if __name__ == "__main__":
     dataset = StockDataset()
-    print(dataset[0])
-    print(dataset[len(dataset)-1])
     print(len(dataset))
 
