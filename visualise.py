@@ -7,8 +7,8 @@ import matplotlib.pyplot as plt
 from hyperparameters import PAST_HISTORY
 from vis_dataset import StockDataset
 
-MODEL_PATH = "./models/hdfc.pt"
-DSET_PATH = "./datasets/hdfc.csv"
+MODEL_PATH = "./models/adani.pt"
+DSET_PATH = "./datasets/adani.csv"
 
 def scaleup (yout): 
     return yout*(2495. - 767.7) + 767.7
@@ -31,7 +31,7 @@ if __name__ == "__main__":
     real = []
 
     model = torch.load(MODEL_PATH)
-    dl = DataLoader(StockDataset(),1)
+    dl = DataLoader(StockDataset(DSET_PATH),1)
     for xin,y in dl:
         y = scaleup(y)
         yout = model(xin.float())
